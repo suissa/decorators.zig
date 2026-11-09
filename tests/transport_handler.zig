@@ -14,6 +14,6 @@ test "shared transport handler returns the same payload" {
 test "shared transport handler reports insufficient output capacity" {
     const input = "payload";
     var output: [2]u8 = undefined;
-    const written = decorators_handle_payload(input.ptr, input.len, &output, output.len);
+    const written = handler.handlePayload(input.ptr, input.len, &output, output.len);
     try std.testing.expectEqual(output.len + 1, written);
 }
