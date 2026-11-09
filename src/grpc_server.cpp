@@ -12,7 +12,7 @@ class GenericCall {
   GenericCall(grpc::AsyncGenericService* service, grpc::ServerCompletionQueue* cq,
               decorators_handler_fn handler)
       : service_(service), cq_(cq), handler_(handler), stream_(&context_) {
-    Proceed(true);
+    service_->RequestCall(&context_, &stream_, cq_, cq_, this);
   }
 
   void Proceed(bool ok) {
