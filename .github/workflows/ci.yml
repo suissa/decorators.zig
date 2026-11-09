@@ -1,0 +1,29 @@
+name: Zig 0.16 CI
+
+on:
+  push:
+    branches: ["main", "ci/**", "feat/**"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Ubuntu / Zig 0.16.0 / unit + integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: "0.16.0"
+      - name: Verify formatting
+        run: zig fmt --check build.zig src tests
+      - name: Build example
+        run: zig build
+      - name: Run unit and integration tests
+        run: zig build test
