@@ -17,13 +17,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install native transport dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgrpc++-dev libssl-dev protobuf-compiler-grpc
       - name: Install Zig
         uses: mlugg/setup-zig@v2
         with:
           version: "0.16.0"
       - name: Verify formatting
         run: zig fmt --check build.zig src tests
-      - name: Build example
+      - name: Install gRPC smoke-test client
+        run: python3 -m pip install --break-system-packages grpcio
+      - name: Build server
         run: zig build
-      - name: Run unit and integration tests
+      - name: Run unit and transport contract tests
         run: zig build test
+      - name: Run live HTTP, WebSocket and gRPC smoke tests
+        run: python3 tests/network_smoke.py

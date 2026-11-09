@@ -1,24 +1,16 @@
-const std = @import("std");
-const decorators = @import("decorators.zig");
+const handler = @import("transport_handler");
 
-fn prompt(text: []const u8) []const u8 {
-    return text;
-}
+extern "c" fn decorators_start_all(
+    http_address: [*:0]const u8,
+    grpc_address: [*:0]const u8,
+    callback: *const fn ([*]const u8, usize, [*]u8, usize) callconv(.c) usize,
+) callconv(.c) c_int;
 
-const PromptBehavior = struct {
-    pub fn before(args: anytype) void {
-        std.debug.print("prompt called with {s}\n", .{args[0]});
-    }
-
-    pub fn after(args: anytype, result: []const u8) void {
-        _ = args;
-        std.debug.print("publish event: execute.prompt.user.success => {s}\n", .{result});
-    }
-};
-
-const Prompt = decorators.Decorator(prompt, PromptBehavior);
-
-pub fn main() void {
-    const result = Prompt.call(.{"hello from Zig"});
-    std.debug.print("handler returned: {s}\n", .{result});
+pub fn main() !void {
+    const result = decorators_start_all(
+        "0.0.0.0:8080",
+        "0.0.0.0:50051",
+        handler.decorators_handle_payload,
+    );
+    if (result != 0) return error.TransportServerFailed;
 }
