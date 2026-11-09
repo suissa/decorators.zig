@@ -1,16 +1,12 @@
 const std = @import("std");
 
-extern fn decorators_handle_payload(
-    input: [*]const u8,
-    input_len: usize,
-    output: [*]u8,
-    output_capacity: usize,
-) callconv(.c) usize;
+const handler = @import("transport_handler");
+
 
 test "shared transport handler returns the same payload" {
     const input = "transport-contract";
     var output: [128]u8 = undefined;
-    const written = decorators_handle_payload(input.ptr, input.len, &output, output.len);
+    const written = handler.handlePayload(input.ptr, input.len, &output, output.len);
     try std.testing.expectEqual(input.len, written);
     try std.testing.expectEqualStrings(input, output[0..written]);
 }
