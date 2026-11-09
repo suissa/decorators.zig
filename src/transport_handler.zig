@@ -1,4 +1,4 @@
-const decorators = @import("decorators.zig");
+const decorators = @import("decorators");
 
 fn process(payload: []const u8) []const u8 {
     return payload;
