@@ -32,8 +32,10 @@ class GenericCall {
       if (!ok) { delete this; return; }
       std::vector<grpc::Slice> slices;
       if (!request_.Dump(&slices).ok()) {
-        stream_.Finish(grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
-                                    "Unable to decode request"), this);
+        grpc::ByteBuffer empty;
+        stream_.WriteAndFinish(empty, grpc::WriteOptions(),
+                               grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
+                                            "Unable to decode request"), this);
         state_ = State::kDone;
         return;
       }
