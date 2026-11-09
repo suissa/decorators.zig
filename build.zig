@@ -4,15 +4,31 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const decorators_module = b.createModule(.{
+        .root_source_file = b.path("src/decorators.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    const handler_module = b.createModule(.{
+        .root_source_file = b.path("src/transport_handler.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    handler_module.addImport("decorators", decorators_module);
+
+    const server_module = b.createModule(.{
+        .root_source_file = b.path("src/main.zig"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+        .link_libcpp = true,
+    });
+    server_module.addImport("decorators", decorators_module);
+    server_module.addImport("transport_handler", handler_module);
+
     const exe = b.addExecutable(.{
         .name = "decorators-server",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/main.zig"),
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-            .link_libcpp = true,
-        }),
+        .root_module = server_module,
     });
     exe.root_module.addCSourceFiles(.{
         .files = &.{
@@ -29,16 +45,7 @@ pub fn build(b: *std.Build) void {
     b.installArtifact(exe);
 
     const unit_tests = b.addTest(.{
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/decorators.zig"),
-            .target = target,
-            .optimize = optimize,
-        }),
-    });
-    const handler_module = b.createModule(.{
-        .root_source_file = b.path("src/transport_handler.zig"),
-        .target = target,
-        .optimize = optimize,
+        .root_module = decorators_module,
     });
     const transport_test_module = b.createModule(.{
         .root_source_file = b.path("tests/transport_handler.zig"),
