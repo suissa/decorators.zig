@@ -6,11 +6,11 @@ fn prompt(text: []const u8) []const u8 {
 }
 
 const PromptBehavior = struct {
-    fn before(args: anytype) void {
+    pub fn before(args: anytype) void {
         std.debug.print("prompt called with {s}\n", .{args[0]});
     }
 
-    fn after(args: anytype, result: []const u8) void {
+    pub fn after(args: anytype, result: []const u8) void {
         _ = args;
         std.debug.print("publish event: execute.prompt.user.success => {s}\n", .{result});
     }
