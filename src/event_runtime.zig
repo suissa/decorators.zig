@@ -2,7 +2,7 @@
 //! Concrete HTTP, WebSocket and gRPC adapters can implement the Sink contract.
 
 const std = @import("std");
-const decorators = @import("decorators.zig");
+const decorators = @import("decorators");
 
 pub fn Dispatcher(comptime Sink: type) type {
     return struct {
