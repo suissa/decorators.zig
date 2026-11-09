@@ -2,7 +2,6 @@ const std = @import("std");
 
 const handler = @import("transport_handler");
 
-
 test "shared transport handler returns the same payload" {
     const input = "transport-contract";
     var output: [128]u8 = undefined;
