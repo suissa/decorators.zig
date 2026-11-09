@@ -1,6 +1,6 @@
 const std = @import("std");
-const decorators = @import("../src/decorators.zig");
-const runtime = @import("../src/event_runtime.zig");
+const decorators = @import("decorators");
+const runtime = @import("event_runtime");
 
 const RecordingSink = struct {
     expected_channel: decorators.Channel,
